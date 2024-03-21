@@ -29,9 +29,12 @@ pipeline {
             }
             steps {
                 sh '''
-                export HOME=$PWD
+                export HOME=`pwd`
                 opalopc -vv localhost:62541 -o opalopc-report
                 '''
+
+                // Archive results
+                archiveArtifacts artifacts: 'opalopc-report.*'
             }
         }
     }
@@ -39,9 +42,6 @@ pipeline {
         always {
             // Kill ReferenceServer if its running
             sh 'docker kill refserver || true'
-
-            // Archive results
-            archiveArtifacts artifacts: 'opalopc-report*'
         }
     }
 }
