@@ -34,8 +34,8 @@ pipeline {
     }
     post {
         always {
-            // Kill ReferenceServer
-            echo 'docker kill refserver'
+            // Kill ReferenceServer if its running
+            sh 'docker kill refserver || true'
 
             // Archive results
             archiveArtifacts artifacts: 'opalopc-report*'
