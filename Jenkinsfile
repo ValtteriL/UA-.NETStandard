@@ -28,7 +28,10 @@ pipeline {
                 }
             }
             steps {
-                sh 'opalopc -vv localhost:62541 -o opalopc-report'
+                sh '''
+                export HOME=$PWD
+                opalopc -vv localhost:62541 -o opalopc-report
+                '''
             }
         }
     }
