@@ -262,3 +262,4 @@ OPC\ Foundation/
 /SampleApplications/Samples/OPCOutput
 !**/Assets/*.*
 *.Nodeset2.xml.zip
+.mono
