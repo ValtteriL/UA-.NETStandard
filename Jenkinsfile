@@ -10,7 +10,7 @@ pipeline {
 
         stage('Create Docker Network') {
             steps {
-                sh 'docker network create opalopc-network'
+                sh 'docker network create $BUILD_NUMBER-opalopc-network'
             }
         }
 
@@ -19,7 +19,7 @@ pipeline {
                 sh '''
                 cd Applications/ConsoleReferenceServer/
                 docker build -f Dockerfile -t consolerefserver ./../..
-                docker run --rm -d --name refserver --network opalopc-network consolerefserver:latest
+                docker run --rm -d --name $BUILD_NUMBER-refserver --network $BUILD_NUMBER-opalopc-network consolerefserver:latest
                 '''
             }
         }
@@ -31,13 +31,13 @@ pipeline {
             agent {
                 dockerfile {
                     filename 'Dockerfile.opalopc'
-                    args '--network=opalopc-network'
+                    args '--network=$BUILD_NUMBER-opalopc-network'
                 }
             }
             steps {
                 sh '''
                 export HOME=`pwd`
-                opalopc -vv opc.tcp://refserver:62541 -o opalopc-report
+                opalopc -vv opc.tcp://$BUILD_NUMBER-refserver:62541 -o opalopc-report
                 '''
 
                 // Archive results
@@ -48,10 +48,10 @@ pipeline {
     post {
         always {
             // Kill ReferenceServer if its running
-            sh 'docker kill refserver || true'
+            sh 'docker kill $BUILD_NUMBER-refserver || true'
 
             // Remove Docker Network if it exists
-            sh 'docker network rm opalopc-network || true'
+            sh 'docker network rm $BUILD_NUMBER-opalopc-network || true'
         }
     }
 }
